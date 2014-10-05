@@ -7,9 +7,11 @@ using System.Security.Cryptography.SymmetricAlgorithm;
 
 namespace Cipherunicon_A
 {
-    class Program
+	// класс программы
+    class Program 
     {
-        static void Main(string[] args)
+    	// функция main
+        static void Main(string[] args) 
         {
         }
     }
@@ -17,12 +19,16 @@ namespace Cipherunicon_A
 
 namespace Console_Out
 {
+	// класс возможных ошибок
     class Errors
     {
+    	// ошибка при вводе аргументов
         void WrongArguments()
         {
             Console.WriteLine("Wrong Arguments!");
         }
+
+        // ошибка исключением
         void TrownException(Exception e)
         {
             Console.WriteLine(e);
