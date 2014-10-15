@@ -13,25 +13,64 @@ namespace Cipherunicon_A
     	// функция main
         static void Main(string[] args) 
         {
+            
         }
     }
-}
 
-namespace Console_Out
-{
-	// класс возможных ошибок
-    class Errors
+    //TODO: дописать комментарии
+    // класс аргументов командной строки
+    class Args
     {
-    	// ошибка при вводе аргументов
-        void WrongArguments()
+        private string _opKey;          // ключ операции
+        private string _fileKey;        // ключ файла
+        private string _inPath;         // путь к входному файлу
+        private string _outPath;        // путь к выходному файлу
+
+        public string opKey
         {
-            Console.WriteLine("Wrong Arguments!");
+            get
+            {
+                return _opKey;
+            }
+        }          //
+        public string fileKey
+        {
+            get
+            {
+                return _fileKey;
+            }
+        }        //
+        public string inPath
+        {
+            get
+            {
+                return _inPath;
+            }
+        }         //
+        public string outPath
+        {
+            get
+            {
+                return _outPath;
+            }
+        }        //
+
+        // конструктор класса
+        private Args(string op, string file, string inf, string outf){
+            _opKey      =   op;
+            _fileKey    =   file;
+            _inPath     =   inf;
+            _outPath    =   outf;
         }
 
-        // ошибка исключением
-        void TrownException(Exception e)
+        private Args instance;
+        public Args Instance(string op, string file, string inf, string outf)
         {
-            Console.WriteLine(e);
+            if (instance == null)
+            {
+                instance = new Args(op,file,inf,outf);
+            }
+            return instance;
         }
-    }
+     }
 }
