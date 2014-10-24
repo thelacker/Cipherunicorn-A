@@ -13,23 +13,23 @@ namespace Cipherunicon_A
         // функция main
         static void Main(string[] args)
         {
-
-        }
-    }
-
-    // класс 
-    class DataForCrypting
-    {
-        public string input;        // путь к файлу ввода
-        public string output;       // путь к файлу вывода
-        public bool   optype;       // тип операции
-
-        // конструктор класса
-        public DataForCrypting() 
-        {
-            input   =   null;
-            output  =   null;
-            optype  =   false;
+            if (args.Length < 2)
+            {
+                Console.WriteLine("No commands!");
+            }
+            else if (args[1] == "help")
+            {
+                Console.WriteLine("Help");
+            }
+            else
+            {
+                Algoritm alg = new Algoritm();
+                for (int i = 0; i < args.Length; i += 5)
+                {
+                    alg.Add(args[i], args[i + 1], args[i + 2], args[i + 3], args[i + 4]);
+                }
+                alg.Process();
+            }
         }
     }
 }

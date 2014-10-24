@@ -104,5 +104,9 @@ namespace Cipherunicon_A
             }
             return instance;                                                                      // возвращаем или созданный объект или уже существуещий
         }
+
+        public Args()
+        {
+        }
     }
 }
