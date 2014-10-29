@@ -1,36 +1,51 @@
+//csc /t:library /doc:Algoritm.xml Algoritm.cs
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Cipherunicon_A{
-	// Класс реализации алгоритма
-	class Algoritm : System.Security.Cryptography.SymmetricAlgorithm
+	/// <summary>
+    /// Класс реализации алгоритма
+	/// </summary>
+    class Algoritm : System.Security.Cryptography.SymmetricAlgorithm, System.Security.Cryptography.ICryptoTransform
     {
-        public List<DataForCrypting> dataList;  // список из данных для шифрования/дешифрования
+        /// <summary>
+        /// Список из данных для шифрования/дешифрования
+        /// </summary>
+        public List<DataForCrypting> dataList;  
 
-        // функция добавление новых аргументов
+        /// <summary>
+        /// Функция добавления новых аргументов
+        /// </summary>
+        /// <param name="opKey">Ключ операции над файлами</param>
+        /// <param name="firstFileKey">Ключ файлу</param>
+        /// <param name="firstFile">Путь файлу</param>
+        /// <param name="secondFileKey">Ключь у другому файлу</param>
+        /// <param name="outPath">Путь к другому файлу</param>
         public void Add(string opKey, string firstFileKey, string firstFile, string secondFileKey, string outPath)
         {
-            Args newArgs            =    new Args();                                                                    // создаем новый класс-обработчик команд
-            newArgs                 =    newArgs.Instance(opKey, firstFileKey, firstFile, secondFileKey, outPath);      // вызываем конструктор и присваеваем полям класса значения командной строки
-            DataForCrypting newData =    newArgs.ToDataForCrypting();                                                   // создаем новый элемент класса данных для шифрования/девфрования и добавляем туда данные из командной строки
+            Args newArgs            =    new Args();                                                                    /// создаем новый класс-обработчик команд
+            newArgs                 =    newArgs.Instance(opKey, firstFileKey, firstFile, secondFileKey, outPath);      /// вызываем конструктор и присваеваем полям класса значения командной строки
+            DataForCrypting newData =    newArgs.ToDataForCrypting();                                                   /// создаем новый элемент класса данных для шифрования/девфрования и добавляем туда данные из командной строки
             
-            dataList.Add(newData);                                                                                      // записываем этот элемент в список данных
+            dataList.Add(newData);                                                                                      /// записываем этот элемент в список данных
         }
 
-        // функция оработки всех обработанных аргументов
+        /// <summary>
+        /// Функция оработки всех обработанных аргументов
+        /// </summary>
         public void Process()
         {
-            foreach (DataForCrypting data in dataList)          // для каждого элемента списка
+            foreach (DataForCrypting data in dataList)          /// для каждого элемента списка
             {
-                if (data.optype == true)                        // либо шифрование
+                if (data.optype == true)                        /// либо шифрование
                 {
                     Crypt(data.input, data.output);
                 }
-                if (data.optype == false)                       // либо дешифрование
+                if (data.optype == false)                       /// либо дешифрование
                 {
                     Decrypt(data.input, data.output);
-                }                                               // в зависимости от обработаного ключа
+                }                                               /// в зависимости от обработаного ключа
 
             }
         }
@@ -67,16 +82,20 @@ namespace Cipherunicon_A{
             Console.WriteLine("Decrypted!");
         }
 
-        // стандартный конструктор
+        /// <summary>
+        /// Стандартный конструктор
+        /// </summary>
         public Algoritm()
         {
             dataList = new List<DataForCrypting>();
         }
 
-        // генератор стандартного вектора инициализации
+        /// <summary>
+        /// Генератор стандартного вектора инициализации
+        /// </summary>
         public override void GenerateIV()    
         {
-            uint[] vector;                                                      // инициализируем массив вектора значений
+            uint[] vector;                                          /// инициализируем массив вектора значений
             vector = new uint[256] {
 	            0x95ae2518, 0x6fff22fc, 0xeda1a290, 0x9b6d8479, 0x15fe8611, 0x5528dc2a, 0x6c5f5b4d, 0x4c438f7f,                 
 	            0xec212902, 0x4b7c2d23, 0xc185e5ad, 0x543af715, 0x16e06281, 0x8aeeb23a, 0x59814469, 0x37383871,
@@ -121,7 +140,9 @@ namespace Cipherunicon_A{
         }
       
         // TODO: Реализовать функцию подбора случайного ключа
-        // Инициализация случайного ключа
+        /// <summary>
+        /// Инициализация случайного ключа
+        /// </summary>
         public override void GenerateKey(){}
 
         // генератор данных для дешифрования
@@ -129,13 +150,17 @@ namespace Cipherunicon_A{
         {
             this.IV     =   vector;
             this.Key    =   skey;
+            
+            return 
         }
 
         // генератор данных для шифрования
-        public override void CreateEncryptor(byte[] skey, byte[] vector)
+        public override System.Security.Cryptography.ICryptoTransform CreateEncryptor(byte[] skey, byte[] vector)
         {
             this.IV     =   vector;
             this.Key    =   skey;
+
+            return 
         }
 	}
 } 

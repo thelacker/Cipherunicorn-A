@@ -1,4 +1,5 @@
-﻿using System;
+﻿//csc /t:library /doc:DataForCrypting.xml DataForCrypting.cs
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,14 +7,30 @@ using System.Threading.Tasks;
 
 namespace Cipherunicon_A
 {
-    // класс данных ждя опрерации шифрования/дешифрования
+    /// <summary>
+    /// Класс данных для операций шифрования/дешифрования
+    /// </summary>
     class DataForCrypting
     {
-        public string input;        // путь к файлу ввода
-        public string output;       // путь к файлу вывода
-        public bool   optype;       // тип операции
+        /// <summary>
+        /// Путь к файлу ввода
+        /// </summary>
+        public string input;
 
-        // конструктор класса
+        /// <summary>
+        /// Путь к файлу вывода
+        /// </summary>
+        public string output; 
+     
+        /// <summary>
+        /// Тип операции
+        /// </summary>
+        public bool   optype;
+       
+
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
         public DataForCrypting() 
         {
             input   =   null;
