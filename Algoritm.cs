@@ -12,8 +12,78 @@ namespace Cipherunicon_A{
         /// <summary>
         /// Список из данных для шифрования/дешифрования
         /// </summary>
-        public List<DataForCrypting> dataList;  
+        public List<DataForCrypting> dataList;
 
+        /// <summary>
+        /// Определяет возможность повторного использования текущего преобразования
+        /// </summary>
+        public bool CanReuseTransform
+        {
+            get
+            {
+                return CanReuseTransform;
+            }
+        }
+
+        /// <summary>
+        /// Определяет возможность преобразования нескольких блоков.
+        /// </summary>
+        public bool CanTransformMultipleBlocks
+        {
+            get
+            {
+                return CanTransformMultipleBlocks;
+            }
+        }
+
+        /// <summary>
+        /// Значение входного блока
+        /// </summary>
+        public int InputBlockSize
+        {
+            get
+            {
+                return InputBlockSize;
+            }
+        }
+
+        /// <summary>
+        /// Значение выходного блока
+        /// </summary>
+        public int OutputBlockSize
+        {
+            get
+            {
+                return OutputBlockSize;
+            }
+        }
+
+        /// <summary>
+        /// Преобразует определенную область входного массива и копирует его в определенную область выходного массива
+        /// </summary>
+        /// <param name="inputBuffer">Входной массив байтов</param>
+        /// <param name="inputOffset">Определяет, с какого элемента начинать преобразование</param>
+        /// <param name="inputCount">Определяет, сколько элементов преобразовывать</param>
+        /// <param name="outputBuffer">Выходной массив данных</param>
+        /// <param name="outputOffset">Смещение выходного массива</param>
+        /// <returns></returns>
+        public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+        {
+            return 0;
+        }
+
+        /// <summary>
+        /// Преобразует заданную область заданного массива байтов
+        /// </summary>
+        /// <param name="inputBuffer">Входной массив</param>
+        /// <param name="inputOffset">Определяет, с какого элемента начать преобразование</param>
+        /// <param name="inputCount">Количество байтов для преобразования</param>
+        /// <returns>Возвращает массив преобразованных байтов</returns>
+        public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
+        {
+            return null;
+        }
+        
         /// <summary>
         /// Функция добавления новых аргументов
         /// </summary>
@@ -53,7 +123,7 @@ namespace Cipherunicon_A{
         // функция шифрования
         public void Crypt(string input, string output) 
         {
-            char[] src = new char[input.Length];            // создаем массив символов
+           /* char[] src = new char[input.Length];            // создаем массив символов
             
             int j = 0;
             foreach (char c in input)                       // преобразуем входную строку в массив символов для удобства обработки
@@ -72,7 +142,10 @@ namespace Cipherunicon_A{
                 wx[i]  |=   (uint)src[i * 4 + 3];
 	        }
 
-
+            for (uint i = 0; i < 4; i++)
+            {
+                wx[i] += (uint)(this.Key + (IK0 + i * 4)));
+            }*/
             Console.WriteLine("Encrypted!");
         }
 
@@ -150,8 +223,8 @@ namespace Cipherunicon_A{
         {
             this.IV     =   vector;
             this.Key    =   skey;
-            
-            return 
+
+            return null;
         }
 
         // генератор данных для шифрования
@@ -160,7 +233,7 @@ namespace Cipherunicon_A{
             this.IV     =   vector;
             this.Key    =   skey;
 
-            return 
+            return null;
         }
 	}
 } 
