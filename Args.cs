@@ -1,5 +1,4 @@
-﻿//csc /t:library /doc:Args.xml Args.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -71,7 +70,7 @@ namespace Cipherunicon_A
                 if (_outPath != null)   // возвращаем при ненулевом значении
                     return _outPath;
                 else
-                    throw new Exception("path to output file is null"); // выбрасываем ошибку в обратном случае
+                    throw new Exception("path to intOutput file is null"); // выбрасываем ошибку в обратном случае
             }
         }
 
@@ -98,11 +97,11 @@ namespace Cipherunicon_A
                 throw new Exception("no file was found");         /// в противном случае выбрасывается исключение
 
             if (File.Exists(outPath))                             /// если файл существует, его путь записывается в класс DataForCrypting
-                dfc.output = outPath;
+                dfc.intOutput = outPath;
             else
             {
                 File.Create(outPath);                             /// в противном случае он создается
-                dfc.output = outPath;                             /// и записывается в значение выходного файла в классе DataForCrypting
+                dfc.intOutput = outPath;                             /// и записывается в значение выходного файла в классе DataForCrypting
             }
 
             return dfc;
@@ -111,13 +110,13 @@ namespace Cipherunicon_A
         /// <summary>
         /// Обработчик ключей
         /// </summary>
-        /// <param name="fileKey">Ключ обработки перед файлом</param>
+        /// <param name="filfkey">Ключ обработки перед файлом</param>
         /// <param name="file">Путь к файлу</param>
-        private void keyCheck(string fileKey, string file)  
+        private void keyCheck(string filfkey, string file)  
         {
-            if (fileKey == "-in")
+            if (filfkey == "-in")
                 _inPath     =   file;                       /// присваиваем путь к входному файлу
-            else if (fileKey == "-out")
+            else if (filfkey == "-out")
                 _outPath    =   file;                       /// присваиваем путь к выходному файлу
             else
                 throw new Exception("wrong key for file");  /// выбрасываем исключение в случае неверных аргументов
@@ -127,36 +126,36 @@ namespace Cipherunicon_A
         /// Конструктор класса
         /// </summary>
         /// <param name="opKey">Ключ операции над файлами</param>
-        /// <param name="firstFileKey">Ключ файлу</param>
+        /// <param name="firstFilfkey">Ключ файлу</param>
         /// <param name="firstFile">Путь файлу</param>
-        /// <param name="secondFileKey">Ключь у другому файлу</param>
+        /// <param name="secondFilfkey">Ключь у другому файлу</param>
         /// <param name="secondFile">Путь к другому файлу</param>
-        private Args(string opKey, string firstFileKey, string firstFile, string secondFileKey, string secondFile)      
+        private Args(string opKey, string firstFilfkey, string firstFile, string secondFilfkey, string secondFile)      
         {
             _opKey      =   opKey;                  /// присваиваем ключ операции
 
-            keyCheck(firstFileKey, firstFile);      /// обрабатываем первый ключ
-            keyCheck(secondFileKey, secondFile);    /// обрабатываем второй ключ
+            keyCheck(firstFilfkey, firstFile);      /// обрабатываем первый ключ
+            keyCheck(secondFilfkey, secondFile);    /// обрабатываем второй ключ
         }
 
         /// <summary>
         /// Функция, создающая синглтон, содержащий аргументы командной строки
         /// </summary>
         /// <param name="opKey">Ключ операции над файлами</param>
-        /// <param name="firstFileKey">Ключ файлу</param>
+        /// <param name="firstFilfkey">Ключ файлу</param>
         /// <param name="firstFile">Путь файлу</param>
-        /// <param name="secondFileKey">Ключь у другому файлу</param>
+        /// <param name="secondFilfkey">Ключь у другому файлу</param>
         /// <param name="secondFile">Путь к другому файлу</param>
         /// <returns>
         /// Объект с аргументами командной строки.
         /// Возвращает новый объект при отсутствии другого,
         /// или уже существующий объект
         /// </returns>
-        public Args Instance(string opKey, string firstFileKey, string firstFile, string secondFileKey, string secondFile) 
+        public Args Instance(string opKey, string firstFilfkey, string firstFile, string secondFilfkey, string secondFile) 
         {
             if (instance == null)                                                                       /// объект создается только если другого объекта не существует
             {
-                instance = new Args(opKey, firstFileKey,  firstFile,  secondFileKey,  secondFile);      /// создание объекта в случае несуществования другого
+                instance = new Args(opKey, firstFilfkey,  firstFile,  secondFilfkey,  secondFile);      /// создание объекта в случае несуществования другого
             }
             return instance;                                                                            /// возвращаем или созданный объект или уже существуещий
         }

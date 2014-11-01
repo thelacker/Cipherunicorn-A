@@ -1,7 +1,7 @@
-//csc /t:library /doc:Algoritm.xml Algoritm.cs
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace Cipherunicon_A{
 	/// <summary>
@@ -50,11 +50,11 @@ namespace Cipherunicon_A{
         /// <summary>
         /// Значение выходного блока
         /// </summary>
-        public int OutputBlockSize
+        public int intOutputBlockSize
         {
             get
             {
-                return OutputBlockSize;
+                return intOutputBlockSize;
             }
         }
 
@@ -64,12 +64,13 @@ namespace Cipherunicon_A{
         /// <param name="inputBuffer">Входной массив байтов</param>
         /// <param name="inputOffset">Определяет, с какого элемента начинать преобразование</param>
         /// <param name="inputCount">Определяет, сколько элементов преобразовывать</param>
-        /// <param name="outputBuffer">Выходной массив данных</param>
-        /// <param name="outputOffset">Смещение выходного массива</param>
+        /// <param name="intOutputBuffer">Выходной массив данных</param>
+        /// <param name="intOutputOffset">Смещение выходного массива</param>
         /// <returns></returns>
-        public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+        public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] intOutputBuffer, int intOutputOffset)
         {
-            return 0;
+            // Not developed yet.
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -81,21 +82,22 @@ namespace Cipherunicon_A{
         /// <returns>Возвращает массив преобразованных байтов</returns>
         public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
         {
-            return null;
+            // Not developed yet.
+            throw new NotImplementedException();
         }
         
         /// <summary>
         /// Функция добавления новых аргументов
         /// </summary>
         /// <param name="opKey">Ключ операции над файлами</param>
-        /// <param name="firstFileKey">Ключ файлу</param>
+        /// <param name="firstFilfkey">Ключ файлу</param>
         /// <param name="firstFile">Путь файлу</param>
-        /// <param name="secondFileKey">Ключь у другому файлу</param>
+        /// <param name="secondFilfkey">Ключь у другому файлу</param>
         /// <param name="outPath">Путь к другому файлу</param>
-        public void Add(string opKey, string firstFileKey, string firstFile, string secondFileKey, string outPath)
+        public void Add(string opKey, string firstFilfkey, string firstFile, string secondFilfkey, string outPath)
         {
             Args newArgs            =    new Args();                                                                    /// создаем новый класс-обработчик команд
-            newArgs                 =    newArgs.Instance(opKey, firstFileKey, firstFile, secondFileKey, outPath);      /// вызываем конструктор и присваеваем полям класса значения командной строки
+            newArgs                 =    newArgs.Instance(opKey, firstFilfkey, firstFile, secondFilfkey, outPath);      /// вызываем конструктор и присваеваем полям класса значения командной строки
             DataForCrypting newData =    newArgs.ToDataForCrypting();                                                   /// создаем новый элемент класса данных для шифрования/девфрования и добавляем туда данные из командной строки
             
             dataList.Add(newData);                                                                                      /// записываем этот элемент в список данных
@@ -108,51 +110,184 @@ namespace Cipherunicon_A{
         {
             foreach (DataForCrypting data in dataList)          /// для каждого элемента списка
             {
+                GenerateIV();
+                byte[] inp = File.ReadAllBytes(data.input);
                 if (data.optype == true)                        /// либо шифрование
                 {
-                    Crypt(data.input, data.output);
+                    Crypt(inp, Key);
                 }
                 if (data.optype == false)                       /// либо дешифрование
                 {
-                    Decrypt(data.input, data.output);
+                    Decrypt(inp, Key);
                 }                                               /// в зависимости от обработаного ключа
 
             }
         }
 
         // функция шифрования
-        public void Crypt(string input, string output) 
+        public byte[] Crypt(byte[] input, byte[] key)
         {
-           /* char[] src = new char[input.Length];            // создаем массив символов
-            
-            int j = 0;
-            foreach (char c in input)                       // преобразуем входную строку в массив символов для удобства обработки
+            int[] w = null;
+            int[] tmp = null;
+            int i = 0;
+            for (i = 0; i < 4; i++)
             {
-                src[j] = c;
-                j++;
+                w[i] = input[i * 4] << 24;
+                w[i] |= input[i * 4 + 1] << 16;
+                w[i] |= input[i * 4 + 2] << 8;
+                w[i] |= input[i * 4 + 3];
+            }
+            for (i = 0; i < 4; i++)
+            {
+                w[i] += key[i*4];
             }
 
-            uint[] wx;                                      // инициализируем беззнаковый целочисленный массив для преобразований в строке
-            wx = new uint[4];
-        	for (uint i = 0; i < 4; i++)
+            for (i = 0; i < 16; i++)
             {
-		        wx[i]   =   (uint)src[i * 4] << 24;
-                wx[i]  |=   (uint)src[i * 4 + 1] << 16;
-                wx[i]  |=   (uint)src[i * 4 + 2] << 8;
-                wx[i]  |=   (uint)src[i * 4 + 3];
-	        }
+                FuncLinear(w[2], w[3], key, tmp[0], tmp[1]);
+                tmp[0] ^= w[0];
+                tmp[1] ^= w[1];
+                w[0] = w[2];
+                w[1] = w[3];
+                w[2] = tmp[0];
+                w[3] = tmp[1];
+            }
 
-            for (uint i = 0; i < 4; i++)
+            w[0] -= key[(16*16+16) + 8];
+            w[1] -= key[((16*16+16) + 12)];
+            w[2] -= key[(16*16+16)];
+            w[3] -= key[((16*16+16) + 4)];
+
+            int[] intOutput = null;
+
+            intOutput[0] = (w[2] >> 24);
+            intOutput[1] = (w[2] >> 16);
+            intOutput[2] = (w[2] >> 8);
+            intOutput[3] = (w[2]);
+            intOutput[4] = (w[3] >> 24);
+            intOutput[5] = (w[3] >> 16);
+            intOutput[6] = (w[3] >> 8);
+            intOutput[7] = (w[3]);
+            intOutput[8] = (w[0] >> 24);
+            intOutput[9] = (w[0] >> 16);
+            intOutput[10] = (w[0] >> 8);
+            intOutput[11] = (w[0]);
+            intOutput[12] = (w[1] >> 24);
+            intOutput[13] = (w[1] >> 16);
+            intOutput[14] = (w[1] >> 8);
+            intOutput[15] = (w[1]);
+
+            byte[] output = null;
+            i = 0;
+            foreach (var bit in intOutput)
             {
-                wx[i] += (uint)(this.Key + (IK0 + i * 4)));
-            }*/
+                output[i++] = Convert.ToByte(bit);
+            }
+            
             Console.WriteLine("Encrypted!");
+            return output;
         }
 
         // функция дешифрования
-        public void Decrypt(string input, string output)
+        public byte[] Decrypt(byte[] input, byte[] key)
         {
+            int[] w = null;
+            int[] tmp = null;
+            int i = 0;
+            for (i = 0; i < 4; i++)
+            {
+                w[i] = input[i * 4] << 24;
+                w[i] |= input[i * 4 + 1] << 16;
+                w[i] |= input[i * 4 + 2] << 8;
+                w[i] |= input[i * 4 + 3];
+            }
+
+            for (i = 0; i < 4; i++)
+            {
+                w[i] += key[i * 4];
+            }
+
+            for (i = 16 - 1; i >= 0; i--)
+            {
+                FuncLinear(w[2], w[3], key, tmp[0], tmp[1]);
+                tmp[0] ^= w[0];
+                tmp[1] ^= w[1];
+
+                w[0] = w[2];
+                w[1] = w[3];
+                w[2] = tmp[0];
+                w[3] = tmp[1];
+            }
+
+            w[0] -= key[(16 * 16 + 16) + 8];
+            w[1] -= key[(16 * 16 + 16) + 12];
+            w[2] -= key[(16 * 16 + 16)];
+            w[3] -= key[(16 * 16 + 16) + 4];
+
+            int[] intOutput = null;
+
+            intOutput[0] = (w[2] >> 24);
+            intOutput[1] = (w[2] >> 16);
+            intOutput[2] = (w[2] >> 8);
+            intOutput[3] = (w[2]);
+            intOutput[4] = (w[3] >> 24);
+            intOutput[5] = (w[3] >> 16);
+            intOutput[6] = (w[3] >> 8);
+            intOutput[7] = (w[3]);
+            intOutput[8] = (w[0] >> 24);
+            intOutput[9] = (w[0] >> 16);
+            intOutput[10] = (w[0] >> 8);
+            intOutput[11] = (w[0]);
+            intOutput[12] = (w[1] >> 24);
+            intOutput[13] = (w[1] >> 16);
+            intOutput[14] = (w[1] >> 8);
+            intOutput[15] = (w[1]);
+
+            byte[] output = null;
+            i = 0;
+            foreach (var bit in intOutput)
+            {
+                output[i++] = Convert.ToByte(bit);
+            }
+
             Console.WriteLine("Decrypted!");
+            return output;
+        }
+
+        public void FuncLinear(int ida, int idb, byte[] k, int oda, int odb)
+        {
+
+            int wx0, wx1, wk0, wk1, tmp;
+            wx0 = ida + k[0];
+            wx1 = idb + k[2];
+            wk0 = idb + k[1];
+            wk1 = ida + k[3];
+            tmp = wx0 ^ wx0 << 23 ^ wx1 >> 9 ^ wx0 >> 23 ^ wx1 << 9;
+            wx1 = wx1 ^ wx1 << 23 ^ wx0 >> 9 ^ wx1 >> 23 ^ wx0 << 9;
+            wx0 = tmp * 0x7e167289;
+            wx1 ^= IV[wx0 >> 24];
+            wx1 *= Convert.ToInt32(0xfe21464b);
+            wx0 ^= IV[wx1 >> 24];
+            wx1 ^= IV[(wx0 >> 16) & 0xff];
+            wx0 ^= IV[(wx1 >> 16) & 0xff];
+            wx1 ^= IV[(wx0 >> 8) & 0xff];
+            wx0 ^= IV[(wx1 >> 8) & 0xff];
+            wx1 ^= IV[wx0 & 0xff];
+            wx0 ^= IV[wx1 & 0xff];
+            wk0 *= 0x7e167289;
+            wk1 ^= IV[wk0 >> 24];
+            wk1 *= Convert.ToInt32(0xfe21464b);
+            wk0 ^= IV[wk1 >> 24];
+            wk0 *= Convert.ToInt32(0xfe21464b);
+            wk1 ^= IV[wk0 >> 24];
+            wk1 *= 0x7e167289;
+            wk0 ^= IV[wk1 >> 24];
+            wk1 ^= IV[(wk0 >> 16) & 0xff];
+            wk0 ^= IV[(wk1 >> 16) & 0xff];
+            wx1 ^= IV[(wx0 >> (24 - ((wk1 & 0xc) << 1))) & 0xff];
+            wx0 ^= IV[(wx1 >> (24 - ((wk1 & 0x3) * 8))) & 0xff];
+            oda = wx0 ^ wk0;
+            odb = wx1 ^ wk0;
         }
 
         /// <summary>
@@ -207,8 +342,7 @@ namespace Cipherunicon_A{
             int i=0;                                                            // преобразовываем данную таблицу замен в байтовый массив        
             foreach (var vec in vector)
             {
-                this.IV[i] = Convert.ToByte(vec);
-                i++;
+                this.IV[i++] = Convert.ToByte(vec);
             }
         }
       
@@ -216,24 +350,24 @@ namespace Cipherunicon_A{
         /// <summary>
         /// Инициализация случайного ключа
         /// </summary>
-        public override void GenerateKey(){}
+        public override void Generatfkey(){
+            // Not developed yet.
+            throw new NotImplementedException();
+        
+        }
 
         // генератор данных для дешифрования
         public override System.Security.Cryptography.ICryptoTransform CreateDecryptor(byte[] skey, byte[] vector)
         {
-            this.IV     =   vector;
-            this.Key    =   skey;
-
-            return null;
+            // Not developed yet.
+            throw new NotImplementedException();
         }
 
         // генератор данных для шифрования
         public override System.Security.Cryptography.ICryptoTransform CreateEncryptor(byte[] skey, byte[] vector)
         {
-            this.IV     =   vector;
-            this.Key    =   skey;
-
-            return null;
+            // Not developed yet.
+            throw new NotImplementedException();
         }
 	}
 } 

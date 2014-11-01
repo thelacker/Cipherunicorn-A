@@ -1,5 +1,4 @@
-﻿//csc /t:library /doc:DataForCrypting.xml DataForCrypting.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,22 +19,21 @@ namespace Cipherunicon_A
         /// <summary>
         /// Путь к файлу вывода
         /// </summary>
-        public string output; 
+        public string intOutput; 
      
         /// <summary>
         /// Тип операции
         /// </summary>
         public bool   optype;
-       
 
         /// <summary>
         /// Конструктор класса
         /// </summary>
         public DataForCrypting() 
         {
-            input   =   null;
-            output  =   null;
-            optype  =   false;
+            input       =   null;
+            intOutput   =   null;
+            optype      =   false;
         }
     }
 }
