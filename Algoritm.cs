@@ -50,11 +50,11 @@ namespace Cipherunicon_A{
         /// <summary>
         /// Значение выходного блока
         /// </summary>
-        public int intOutputBlockSize
+        public int OutputBlockSize
         {
             get
             {
-                return intOutputBlockSize;
+                return OutputBlockSize;
             }
         }
 
@@ -114,17 +114,22 @@ namespace Cipherunicon_A{
                 byte[] inp = File.ReadAllBytes(data.input);
                 if (data.optype == true)                        /// либо шифрование
                 {
-                    Crypt(inp, Key);
+                    File.WriteAllBytes(data.intOutput, Crypt(inp, Key));
                 }
                 if (data.optype == false)                       /// либо дешифрование
                 {
-                    Decrypt(inp, Key);
+                    File.WriteAllBytes(data.intOutput, Decrypt(inp, Key));
                 }                                               /// в зависимости от обработаного ключа
 
             }
         }
 
-        // функция шифрования
+        /// <summary>
+        /// Функция шифрования данных
+        /// </summary>
+        /// <param name="input">Входящий массив данных</param>
+        /// <param name="key">Ключ для шифрования</param>
+        /// <returns>Возвращает массив шифрованных байтов</returns>
         public byte[] Crypt(byte[] input, byte[] key)
         {
             int[] w = null;
@@ -188,7 +193,12 @@ namespace Cipherunicon_A{
             return output;
         }
 
-        // функция дешифрования
+        /// <summary>
+        /// Функция дешифрования
+        /// </summary>
+        /// <param name="input">Входящий массив данных</param>
+        /// <param name="key">Ключ дешифрования</param>
+        /// <returns>Возвращает массив дешифрованых байтов</returns>
         public byte[] Decrypt(byte[] input, byte[] key)
         {
             int[] w = null;
@@ -296,13 +306,16 @@ namespace Cipherunicon_A{
         public Algoritm()
         {
             dataList = new List<DataForCrypting>();
+            GenerateIV();
+            GenerateKey();
         }
 
         /// <summary>
         /// Генератор стандартного вектора инициализации
         /// </summary>
-        public override void GenerateIV()    
+        public override void GenerateIV() 
         {
+            IV = File.ReadAllBytes("C:\\Users\\Андрей\\Desktop");
             uint[] vector;                                          /// инициализируем массив вектора значений
             vector = new uint[256] {
 	            0x95ae2518, 0x6fff22fc, 0xeda1a290, 0x9b6d8479, 0x15fe8611, 0x5528dc2a, 0x6c5f5b4d, 0x4c438f7f,                 
@@ -350,20 +363,30 @@ namespace Cipherunicon_A{
         /// <summary>
         /// Инициализация случайного ключа
         /// </summary>
-        public override void Generatfkey(){
-            // Not developed yet.
-            throw new NotImplementedException();
-        
+        public override void GenerateKey()
+        {
+            Console.WriteLine("Password: ");
+            Key = File.ReadAllBytes("C:\\Users\\Андрей\\Desktop\\2.txt");
         }
 
-        // генератор данных для дешифрования
+        /// <summary>
+        /// Генерирует данные дешифрования
+        /// </summary>
+        /// <param name="skey">Ключ шифрования</param>
+        /// <param name="vector">Вектор инициализации</param>
+        /// <returns>Возвращает объект, содержащий информацию о шифраторе</returns>
         public override System.Security.Cryptography.ICryptoTransform CreateDecryptor(byte[] skey, byte[] vector)
         {
             // Not developed yet.
             throw new NotImplementedException();
         }
 
-        // генератор данных для шифрования
+        /// <summary>
+        /// Генерирует данные для шифрования
+        /// </summary>
+        /// <param name="skey">Ключ шифрования</param>
+        /// <param name="vector">Вектор инициализации</param>
+        /// <returns>Возвращает объект, содержащий информацию о шифраторе</returns>
         public override System.Security.Cryptography.ICryptoTransform CreateEncryptor(byte[] skey, byte[] vector)
         {
             // Not developed yet.
